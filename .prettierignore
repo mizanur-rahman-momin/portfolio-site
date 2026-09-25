@@ -1,0 +1,17 @@
+# Build output and dependencies
+.next
+out
+build
+node_modules
+coverage
+
+# Generated at build time from content/
+public/content
+
+# Lockfile
+package-lock.json
+
+# Authored content is prose: Prettier would reflow it, so leave it alone.
+content
+*.md
+*.mdx

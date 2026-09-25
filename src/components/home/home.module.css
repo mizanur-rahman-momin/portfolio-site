@@ -1,0 +1,352 @@
+/* ------------------------------------------------------------------ *
+ * Homepage-scoped presentation styles.
+ *
+ * Everything here is additive and isolated to the homepage through the
+ * `accents` wrapper and component classes, so no other route changes.
+ * Tailwind's `dark:` variant cannot reach a CSS module, so dark values
+ * are scoped under the global `.dark` class explicitly.
+ * ------------------------------------------------------------------ */
+
+.accents {
+  --hp-copper: #c2410c;
+  --hp-teal: #0ea5a4;
+  --hp-indigo: #4f46e5;
+  --hp-rose: #e11d48;
+  --hp-gold: #f59e0b;
+}
+
+:global(.dark) .accents {
+  --hp-copper: #fb923c;
+  --hp-teal: #2dd4bf;
+  --hp-indigo: #818cf8;
+  --hp-rose: #fb7185;
+  --hp-gold: #fbbf24;
+}
+
+/* Ambient gradient mesh ---------------------------------------------- */
+
+.mesh {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.meshBlob {
+  position: absolute;
+  display: block;
+  border-radius: 9999px;
+  filter: blur(60px);
+  opacity: 0.4;
+  animation: hp-drift 14s ease-in-out infinite alternate;
+}
+
+:global(.dark) .meshBlob {
+  opacity: 0.32;
+}
+
+.blobCopper {
+  top: -7rem;
+  right: -4rem;
+  width: 24rem;
+  height: 24rem;
+  background: var(--hp-copper);
+}
+
+.blobTeal {
+  right: 8rem;
+  bottom: -6rem;
+  width: 18rem;
+  height: 18rem;
+  background: var(--hp-teal);
+  animation-delay: -4s;
+}
+
+.blobIndigo {
+  top: 28%;
+  left: -6rem;
+  width: 18rem;
+  height: 18rem;
+  background: var(--hp-indigo);
+  animation-delay: -8s;
+}
+
+.blobGold {
+  bottom: 8%;
+  left: 34%;
+  width: 13rem;
+  height: 13rem;
+  background: var(--hp-gold);
+  animation-delay: -2s;
+}
+
+@keyframes hp-drift {
+  from {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  to {
+    transform: translate3d(1.5rem, -1.25rem, 0) scale(1.08);
+  }
+}
+
+@media (max-width: 640px) {
+  .meshBlob {
+    filter: blur(40px);
+    opacity: 0.32;
+  }
+
+  .blobIndigo {
+    display: none;
+  }
+}
+
+/* Hero portrait scene ------------------------------------------------- */
+
+.scene {
+  position: relative;
+  width: 100%;
+  max-width: 28rem;
+  margin-inline: auto;
+  perspective: 1200px;
+  transform-style: preserve-3d;
+  transform: translate3d(0, var(--scroll-y, 0px), 0);
+}
+
+.portraitFrame {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--surface-muted);
+  box-shadow: var(--elev-lg);
+  transform: translateZ(30px) rotateY(calc(-5deg + var(--tilt-x, 0deg)))
+    rotateX(calc(2deg + var(--tilt-y, 0deg)));
+}
+
+/* Only the fallback needs a fixed ratio; a real photo supplies its own. */
+.portraitFramePlaceholder {
+  aspect-ratio: 4 / 5;
+}
+
+.portraitImage {
+  object-fit: cover;
+}
+
+.portraitPlaceholder,
+.cardPlaceholder {
+  position: absolute;
+  inset: 0;
+}
+
+.portraitPlaceholder {
+  background:
+    radial-gradient(
+      120% 90% at 18% 12%,
+      color-mix(in oklab, var(--hp-copper) 60%, transparent),
+      transparent 62%
+    ),
+    radial-gradient(
+      120% 90% at 82% 82%,
+      color-mix(in oklab, var(--hp-indigo) 60%, transparent),
+      transparent 62%
+    ),
+    linear-gradient(160deg, var(--surface-muted), var(--surface));
+}
+
+.floatCard {
+  position: absolute;
+  width: 9.5rem;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  background: var(--surface);
+  box-shadow: var(--elev-md);
+  transform-style: preserve-3d;
+}
+
+.floatCardA {
+  --hp-accent: var(--hp-teal);
+  top: 7%;
+  left: -1.5rem;
+  transform: translateZ(90px) rotate(-4deg) rotateY(calc(6deg + var(--tilt-x, 0deg)));
+}
+
+.floatCardB {
+  --hp-accent: var(--hp-gold);
+  right: -1.75rem;
+  bottom: 9%;
+  transform: translateZ(130px) rotate(3deg) rotateY(calc(-6deg + var(--tilt-y, 0deg)));
+}
+
+.floatCardMedia {
+  position: relative;
+  aspect-ratio: 3 / 2;
+  animation: hp-float 7s ease-in-out infinite alternate;
+}
+
+.floatCardB .floatCardMedia {
+  animation-duration: 9s;
+  animation-delay: -3s;
+}
+
+.cardPlaceholder {
+  background: linear-gradient(
+    150deg,
+    color-mix(in oklab, var(--hp-accent) 55%, var(--surface)),
+    var(--surface) 78%
+  );
+}
+
+@keyframes hp-float {
+  from {
+    transform: translateY(-4px);
+  }
+  to {
+    transform: translateY(5px);
+  }
+}
+
+.scene:not(:hover) .portraitFrame,
+.scene:not(:hover) .floatCard {
+  transition: transform 500ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (max-width: 640px) {
+  .floatCard {
+    width: 7rem;
+  }
+
+  .floatCardA {
+    left: -0.75rem;
+  }
+
+  .floatCardB {
+    right: -0.75rem;
+  }
+}
+
+/* Accent cards (focus areas, services) ------------------------------- */
+
+.tiltCard,
+.serviceCard {
+  --hp-accent: var(--hp-copper);
+}
+
+.tiltCard[data-accent="teal"],
+.serviceCard[data-accent="teal"] {
+  --hp-accent: var(--hp-teal);
+}
+
+.tiltCard[data-accent="indigo"],
+.serviceCard[data-accent="indigo"] {
+  --hp-accent: var(--hp-indigo);
+}
+
+.tiltCard[data-accent="rose"],
+.serviceCard[data-accent="rose"] {
+  --hp-accent: var(--hp-rose);
+}
+
+.tiltCard {
+  transform-style: preserve-3d;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .tiltCard {
+    transform: perspective(900px) rotateX(var(--tilt-y, 0deg)) rotateY(var(--tilt-x, 0deg));
+    transition: transform 200ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+}
+
+.focusCard,
+.serviceCard {
+  position: relative;
+  overflow: hidden;
+}
+
+.focusCard::before,
+.serviceCard::before {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  height: 3px;
+  background: linear-gradient(
+    90deg,
+    var(--hp-accent),
+    color-mix(in oklab, var(--hp-accent) 8%, transparent)
+  );
+}
+
+.focusCard::after,
+.serviceCard::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    130% 90% at 100% 0%,
+    color-mix(in oklab, var(--hp-accent) 12%, transparent),
+    transparent 62%
+  );
+}
+
+.focusIcon {
+  color: var(--hp-accent);
+}
+
+/* Closing CTA panel --------------------------------------------------- */
+
+.ctaPanel {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background:
+    radial-gradient(
+      90% 130% at 100% 0%,
+      color-mix(in oklab, var(--hp-indigo) 16%, transparent),
+      transparent 62%
+    ),
+    radial-gradient(
+      80% 120% at 0% 100%,
+      color-mix(in oklab, var(--hp-copper) 14%, transparent),
+      transparent 62%
+    ),
+    var(--surface);
+  box-shadow: var(--elev-md);
+}
+
+.ctaBand {
+  position: absolute;
+  inset-block: 0;
+  right: 0;
+  display: none;
+  width: 42%;
+  pointer-events: none;
+  opacity: 0.18;
+  -webkit-mask-image: linear-gradient(to left, #000, transparent);
+  mask-image: linear-gradient(to left, #000, transparent);
+}
+
+@media (min-width: 1024px) {
+  .ctaBand {
+    display: block;
+  }
+}
+
+/* Reduced motion ------------------------------------------------------ */
+
+@media (prefers-reduced-motion: reduce) {
+  .meshBlob,
+  .floatCardMedia {
+    animation: none;
+  }
+
+  .scene,
+  .portraitFrame,
+  .floatCard,
+  .tiltCard {
+    transform: none;
+    transition: none;
+  }
+}

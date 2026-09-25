@@ -1,0 +1,89 @@
+---
+title: "Sublix"
+description: "A subscription and trial reminder SaaS that tracks what people and teams pay for. In development."
+slug: "sublix"
+date: "2026-01-15"
+category: "SaaS Product"
+role: "Founder and CEO"
+client: "SublixApp (own product)"
+timeline: "Jan 2026 — Present"
+technologies: ["Next.js", "TypeScript", "Supabase", "PostgreSQL"]
+outcome: "A defined product plan and an early build. In development."
+featured: true
+order: 2
+relatedArticles: ["repeatable-revenue-system"]
+relatedServices: ["saas-development", "marketing-automation-ai-workflows"]
+---
+
+## Overview
+
+Sublix is a SaaS product I am building. It is a subscription and trial
+reminder tool. People and teams add what they pay for, and Sublix reminds them
+before a trial ends or a plan renews.
+
+Sublix is **in development**. It is not shipped yet. This case study describes
+the problem and the decisions so far, not a finished product.
+
+## Problem
+
+Most people lose track of what they pay for. Free trials turn into paid plans.
+Small subscriptions renew quietly. The result is money spent on tools nobody
+uses any more.
+
+The same problem shows up in teams, where nobody is sure who owns which
+subscription.
+
+## Context
+
+- The idea started as a simple reminder app and was renamed from SubAlert to
+  Sublix.
+- The goal is a real SaaS product, not a single-purpose reminder tool.
+- I am building it with AI as a working partner, using a written specification.
+
+## Goals
+
+1. Show every subscription and trial in one place.
+2. Send a reminder before a renewal or an expiry.
+3. Make it useful for teams, not only individuals.
+
+## Planned features
+
+- **Upcoming renewals.** Subscriptions that are about to renew.
+- **Expiring this week.** Trials and plans that end soon.
+- **Spending.** Monthly and annual totals.
+- Accounts, teams and an admin view.
+- Notification channels: email, WhatsApp, Telegram and Slack.
+- Custom categories and multiple currencies.
+- Bulk actions and subscription scanning.
+
+## Technical direction
+
+The stack is Next.js, TypeScript and Supabase, with PostgreSQL for data and
+Supabase Auth for accounts. I develop locally first and deploy when the build
+is stable.
+
+I write a clear specification before building. That keeps the product coherent
+and lets AI coding tools work against a plan rather than a guess.
+
+## Challenges
+
+- **Keeping the scope honest.** It is easy to plan too much. The first version
+  stays small and focused.
+- **Reminders that people trust.** A reminder is only useful if it arrives on
+  time, every time.
+- **Team use.** Individuals and teams need different views of the same data.
+
+## Lessons learned
+
+- Writing the plan down first makes the build faster, not slower.
+- Starting small is the only way to reach a first version that works.
+
+## Technology
+
+Next.js, TypeScript, Supabase, PostgreSQL.
+
+## Next
+
+If you are building a SaaS product, read how I approach [SaaS
+development](/services#saas-development) or see [PostNow](/projects/postnow),
+the other product in development.
