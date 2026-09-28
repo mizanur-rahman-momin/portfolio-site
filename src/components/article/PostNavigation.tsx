@@ -17,13 +17,15 @@ export function PostNavigation({ previous, next }: PostNavigationProps) {
         <Link
           href={`/blog/${previous.slug}`}
           rel="prev"
-          className="group rounded-card border-border bg-surface hover:border-border-strong flex flex-col border p-5 transition-colors"
+          className="group flex flex-col rounded-2xl border border-zinc-200/90 bg-white p-5 shadow-2xs transition-all hover:-translate-y-0.5 hover:border-blue-500/50 hover:shadow-sm dark:border-zinc-800/90 dark:bg-zinc-900/80 dark:hover:border-blue-500/40"
         >
-          <span className="text-fg-subtle inline-flex items-center gap-1.5 text-xs font-medium tracking-wide uppercase">
-            <ArrowLeftIcon className="size-3.5 transition-transform group-hover:-translate-x-0.5" />
-            Newer
+          <span className="inline-flex items-center gap-1.5 text-xs font-bold tracking-wider text-blue-600 uppercase transition-colors dark:text-blue-400">
+            <ArrowLeftIcon className="size-3.5 transition-transform group-hover:-translate-x-1" />
+            Previous Article
           </span>
-          <span className="text-fg mt-2 font-medium">{previous.frontmatter.title}</span>
+          <span className="mt-2 text-sm font-semibold text-zinc-900 transition-colors group-hover:text-blue-600 sm:text-base dark:text-white dark:group-hover:text-blue-400">
+            {previous.frontmatter.title}
+          </span>
         </Link>
       ) : (
         <span aria-hidden="true" className="hidden sm:block" />
@@ -33,13 +35,15 @@ export function PostNavigation({ previous, next }: PostNavigationProps) {
         <Link
           href={`/blog/${next.slug}`}
           rel="next"
-          className="group rounded-card border-border bg-surface hover:border-border-strong flex flex-col border p-5 transition-colors sm:items-end sm:text-right"
+          className="group flex flex-col rounded-2xl border border-zinc-200/90 bg-white p-5 shadow-2xs transition-all hover:-translate-y-0.5 hover:border-blue-500/50 hover:shadow-sm sm:items-end sm:text-right dark:border-zinc-800/90 dark:bg-zinc-900/80 dark:hover:border-blue-500/40"
         >
-          <span className="text-fg-subtle inline-flex items-center gap-1.5 text-xs font-medium tracking-wide uppercase">
-            Older
-            <ArrowRightIcon className="size-3.5 transition-transform group-hover:translate-x-0.5" />
+          <span className="inline-flex items-center gap-1.5 text-xs font-bold tracking-wider text-blue-600 uppercase transition-colors dark:text-blue-400">
+            Next Article
+            <ArrowRightIcon className="size-3.5 transition-transform group-hover:translate-x-1" />
           </span>
-          <span className="text-fg mt-2 font-medium">{next.frontmatter.title}</span>
+          <span className="mt-2 text-sm font-semibold text-zinc-900 transition-colors group-hover:text-blue-600 sm:text-base dark:text-white dark:group-hover:text-blue-400">
+            {next.frontmatter.title}
+          </span>
         </Link>
       ) : null}
     </nav>

@@ -3,12 +3,16 @@
   "version": "1.0.0",
   "private": true,
   "description": "World-class personal portfolio and blog built with Next.js, TypeScript, Tailwind CSS and MDX.",
+  "engines": {
+    "node": ">=20.11.0"
+  },
   "scripts": {
-    "predev": "node scripts/sync-content-images.mjs",
+    "predev": "node scripts/prebuild.mjs",
     "dev": "next dev",
-    "prebuild": "node scripts/sync-content-images.mjs",
+    "prebuild": "node scripts/prebuild.mjs",
     "build": "next build",
     "start": "next start",
+    "generate:covers": "python3 scripts/generate-blog-covers.py",
     "sync:images": "node scripts/sync-content-images.mjs",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",

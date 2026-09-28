@@ -59,10 +59,13 @@ export function ReadingProgress({ targetId }: ReadingProgressProps) {
   }, [targetId]);
 
   return (
-    <div aria-hidden="true" className="fixed inset-x-0 top-16 z-40 h-0.5 bg-transparent">
+    <div
+      aria-hidden="true"
+      className="pointer-events-none fixed inset-x-0 top-16 z-40 h-[3px] bg-zinc-200/20 dark:bg-zinc-800/30"
+    >
       <div
         ref={barRef}
-        className="bg-accent h-full origin-left"
+        className="h-full origin-left bg-gradient-to-r from-blue-600 via-indigo-500 to-cyan-400 shadow-[0_0_12px_rgba(59,130,246,0.7)]"
         style={{ transform: "scaleX(0)" }}
       />
     </div>

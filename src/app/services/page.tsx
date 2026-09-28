@@ -2,12 +2,13 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Breadcrumbs } from "@/components/seo/Breadcrumbs";
 import { JsonLd } from "@/components/seo/JsonLd";
-import { ButtonLink } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
 import { ArrowRightIcon, CheckIcon } from "@/components/ui/icons";
+import { TestimonialsStrip } from "@/components/home/TestimonialsStrip";
+import { NewsletterStrip } from "@/components/home/NewsletterStrip";
+import { AboutFaq } from "@/components/about/AboutFaq";
 import { services } from "@/config/content";
-import { siteConfig } from "@/config/site";
 import { getBlogPostBySlug } from "@/lib/content/blog";
 import { getProjectBySlug } from "@/lib/content/projects";
 import { buildMetadata } from "@/lib/seo/metadata";
@@ -31,7 +32,7 @@ export const metadata: Metadata = buildMetadata({
 
 export default function ServicesPage() {
   return (
-    <>
+    <div className="min-h-screen bg-white text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100">
       <Breadcrumbs
         items={[
           { name: "Home", href: "/" },
@@ -60,26 +61,38 @@ export default function ServicesPage() {
         ]}
       />
 
-      <Section spacing="compact">
-        <Container size="wide">
-          <p className="text-accent-ink font-mono text-xs font-medium tracking-[0.14em] uppercase">
-            Services
-          </p>
-          <h1 className="text-title text-fg mt-4 max-w-3xl text-balance">
-            Lead generation, outreach and SaaS — done with clear systems
+      {/* Services Hero Header */}
+      <section className="relative overflow-hidden border-b border-zinc-200/80 bg-white pt-14 pb-16 sm:pt-20 sm:pb-24 dark:border-zinc-800/80 dark:bg-zinc-950">
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(ellipse_60%_50%_at_50%_0%,rgba(37,99,235,0.08),transparent_70%)] dark:bg-[radial-gradient(ellipse_60%_50%_at_50%_0%,rgba(37,99,235,0.18),transparent_70%)]"
+        />
+        <div
+          aria-hidden="true"
+          className="hero-grid pointer-events-none absolute inset-0 -z-10 opacity-30 dark:opacity-20"
+        />
+        <Container size="wide" className="text-center">
+          <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-blue-500/20 bg-blue-50/80 px-3.5 py-1 text-xs font-semibold text-blue-600 shadow-2xs backdrop-blur-md dark:border-blue-500/30 dark:bg-blue-950/60 dark:text-blue-300">
+            <span className="size-1.5 animate-pulse rounded-full bg-blue-600 dark:bg-blue-400" />
+            B2B Outbound &amp; Sales Engines
+          </div>
+          <h1 className="mx-auto mt-3 max-w-4xl text-4xl leading-[1.12] font-extrabold tracking-tight text-zinc-900 sm:text-5xl lg:text-6xl dark:text-white">
+            Lead Generation, Outreach &amp; SaaS <br className="hidden sm:inline" />
+            <span className="text-blue-600 dark:text-blue-400">Done With Clear Systems</span>
           </h1>
-          <p className="text-fg-muted mt-5 max-w-2xl text-lg leading-relaxed">
-            I work with a small number of B2B teams at a time. Each service below describes what the
-            work covers, who it is for and how it runs.
+          <p className="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-zinc-600 sm:text-lg dark:text-zinc-400">
+            I work with a small number of B2B teams at a time to build verified prospect lists,
+            high-reply cold sequences, and automated outreach pipelines.
           </p>
 
+          {/* Quick jump navigation */}
           <nav aria-label="Services on this page" className="mt-10">
-            <ul className="flex flex-wrap gap-2">
+            <ul className="mx-auto flex max-w-4xl flex-wrap items-center justify-center gap-2">
               {services.map((service) => (
                 <li key={service.slug}>
                   <a
                     href={`#${service.slug}`}
-                    className="border-border text-fg-muted hover:border-border-strong hover:text-fg inline-flex rounded-full border px-3.5 py-1.5 text-sm transition-colors"
+                    className="inline-flex rounded-full border border-zinc-200 bg-zinc-50 px-4 py-2 text-xs font-medium text-zinc-700 shadow-2xs transition-colors hover:border-blue-500 hover:text-blue-600 sm:text-sm dark:border-zinc-800 dark:bg-zinc-900/60 dark:text-zinc-300 dark:hover:text-blue-400"
                   >
                     {service.name}
                   </a>
@@ -88,169 +101,171 @@ export default function ServicesPage() {
             </ul>
           </nav>
         </Container>
-      </Section>
+      </section>
 
-      {services.map((service, index) => {
-        const relatedProjects = service.relatedProjects
-          .map((slug) => getProjectBySlug(slug))
-          .filter((project): project is NonNullable<typeof project> => Boolean(project));
-        const relatedArticles = service.relatedArticles
-          .map((slug) => getBlogPostBySlug(slug))
-          .filter((post): post is NonNullable<typeof post> => Boolean(post));
+      {/* Services List */}
+      <div className="divide-y divide-zinc-200/80 dark:divide-zinc-800/80">
+        {services.map((service, index) => {
+          const relatedProjects = service.relatedProjects
+            .map((slug) => getProjectBySlug(slug))
+            .filter((project): project is NonNullable<typeof project> => Boolean(project));
+          const relatedArticles = service.relatedArticles
+            .map((slug) => getBlogPostBySlug(slug))
+            .filter((post): post is NonNullable<typeof post> => Boolean(post));
 
-        return (
-          <Section key={service.slug} id={service.slug} divided spacing="compact">
-            <Container size="wide">
-              <div className="grid gap-10 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)]">
-                <div>
-                  <p className="text-fg-subtle font-mono text-xs font-medium tracking-[0.14em] uppercase">
-                    {String(index + 1).padStart(2, "0")}
-                  </p>
-                  <h2 className="text-title text-fg mt-3 text-balance">{service.name}</h2>
-                  <p className="text-fg-muted mt-4 max-w-2xl text-lg leading-relaxed">
-                    {service.summary}
-                  </p>
+          return (
+            <Section key={service.slug} id={service.slug} spacing="default">
+              <Container size="wide">
+                <div className="grid items-start gap-12 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)]">
+                  <div>
+                    <span className="rounded-md bg-blue-50 px-3 py-1 font-mono text-xs font-bold tracking-wider text-blue-600 uppercase dark:bg-blue-950 dark:text-blue-400">
+                      Service {String(index + 1).padStart(2, "0")}
+                    </span>
 
-                  <div className="mt-8">
-                    <h3 className="text-fg-subtle text-sm font-semibold tracking-[0.12em] uppercase">
-                      Who it is for
-                    </h3>
-                    <p className="text-fg-muted mt-3 max-w-2xl text-sm leading-relaxed">
-                      {service.forWho}
+                    <h2 className="mt-4 text-2xl font-extrabold tracking-tight text-zinc-900 sm:text-3xl lg:text-4xl dark:text-white">
+                      {service.name}
+                    </h2>
+
+                    <p className="mt-4 text-base leading-relaxed text-zinc-600 sm:text-lg dark:text-zinc-300">
+                      {service.summary}
                     </p>
+
+                    <div className="mt-8 rounded-2xl border border-zinc-200/80 bg-zinc-50 p-6 dark:border-zinc-800 dark:bg-zinc-900/60">
+                      <h3 className="text-xs font-bold tracking-widest text-zinc-500 uppercase">
+                        Who it is for
+                      </h3>
+                      <p className="mt-2 text-sm leading-relaxed font-medium text-zinc-800 sm:text-base dark:text-zinc-200">
+                        {service.forWho}
+                      </p>
+                    </div>
+
+                    <div className="mt-8 grid gap-8 sm:grid-cols-2">
+                      <div className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-2xs dark:border-zinc-800 dark:bg-zinc-900">
+                        <h3 className="flex items-center gap-1.5 text-xs font-bold tracking-widest text-rose-600 uppercase dark:text-rose-400">
+                          <span>⚠️</span> Problems it solves
+                        </h3>
+                        <ul className="mt-4 flex flex-col gap-3">
+                          {service.problems.map((problem) => (
+                            <li
+                              key={problem}
+                              className="flex gap-2.5 text-sm leading-relaxed text-zinc-600 dark:text-zinc-400"
+                            >
+                              <span className="font-bold text-rose-500">•</span>
+                              <span>{problem}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+
+                      <div className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-2xs dark:border-zinc-800 dark:bg-zinc-900">
+                        <h3 className="flex items-center gap-1.5 text-xs font-bold tracking-widest text-emerald-600 uppercase dark:text-emerald-400">
+                          <span>✓</span> What you get
+                        </h3>
+                        <ul className="mt-4 flex flex-col gap-3">
+                          {service.deliverables.map((item) => (
+                            <li
+                              key={item}
+                              className="flex gap-2.5 text-sm leading-relaxed text-zinc-600 dark:text-zinc-400"
+                            >
+                              <CheckIcon
+                                className="mt-0.5 size-4 shrink-0 text-emerald-500"
+                                aria-hidden="true"
+                              />
+                              <span>{item}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
                   </div>
 
-                  <div className="mt-8 grid gap-8 sm:grid-cols-2">
-                    <div>
-                      <h3 className="text-fg-subtle text-sm font-semibold tracking-[0.12em] uppercase">
-                        Problems it solves
+                  {/* Sidebar with Process & Timeline */}
+                  <aside className="flex flex-col gap-6">
+                    <div className="rounded-2xl border border-zinc-200 bg-zinc-50 p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900/60">
+                      <h3 className="mb-4 text-xs font-bold tracking-widest text-zinc-500 uppercase">
+                        Step-by-Step Process
                       </h3>
-                      <ul className="mt-3 flex flex-col gap-2.5">
-                        {service.problems.map((problem) => (
-                          <li key={problem} className="text-fg-muted flex gap-2.5 text-sm">
-                            <span
-                              aria-hidden="true"
-                              className="bg-accent mt-2 size-1.5 rounded-full"
-                            />
-                            <span>{problem}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                    <div>
-                      <h3 className="text-fg-subtle text-sm font-semibold tracking-[0.12em] uppercase">
-                        What you get
-                      </h3>
-                      <ul className="mt-3 flex flex-col gap-2.5">
-                        {service.deliverables.map((item) => (
-                          <li key={item} className="text-fg-muted flex gap-2.5 text-sm">
-                            <CheckIcon
-                              className="text-success mt-0.5 size-4 shrink-0"
-                              aria-hidden="true"
-                            />
-                            <span>{item}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-
-                <aside className="flex flex-col gap-8">
-                  <div className="surface-card p-6">
-                    <h3 className="text-fg-subtle text-sm font-semibold tracking-[0.12em] uppercase">
-                      Process
-                    </h3>
-                    <ol className="mt-4 flex flex-col gap-4">
-                      {service.process.map((step, stepIndex) => (
-                        <li key={step.step} className="flex gap-3">
-                          <span className="bg-accent-soft text-accent-ink mt-0.5 inline-flex size-6 shrink-0 items-center justify-center rounded-full text-xs font-semibold">
-                            {stepIndex + 1}
-                          </span>
-                          <span>
-                            <span className="text-fg block text-sm font-medium">{step.step}</span>
-                            <span className="text-fg-muted mt-0.5 block text-sm">
-                              {step.detail}
+                      <ol className="flex flex-col gap-4">
+                        {service.process.map((step, stepIndex) => (
+                          <li key={step.step} className="flex gap-3">
+                            <span className="mt-0.5 inline-flex size-6 shrink-0 items-center justify-center rounded-full bg-blue-100 text-xs font-bold text-blue-600 dark:bg-blue-950 dark:text-blue-400">
+                              {stepIndex + 1}
                             </span>
-                          </span>
-                        </li>
-                      ))}
-                    </ol>
-                  </div>
-
-                  <div className="surface-card p-6">
-                    <h3 className="text-fg-subtle text-sm font-semibold tracking-[0.12em] uppercase">
-                      Typical timeline
-                    </h3>
-                    <p className="text-fg-muted mt-3 text-sm leading-relaxed">{service.timeline}</p>
-                  </div>
-
-                  {(relatedProjects.length > 0 || relatedArticles.length > 0) && (
-                    <div className="surface-card p-6">
-                      <h3 className="text-fg-subtle text-sm font-semibold tracking-[0.12em] uppercase">
-                        Related
-                      </h3>
-                      <ul className="mt-4 flex flex-col gap-3 text-sm">
-                        {relatedProjects.map((project) => (
-                          <li key={project.slug}>
-                            <Link
-                              href={`/projects/${project.slug}`}
-                              className="link-underline text-fg-muted hover:text-fg"
-                            >
-                              {project.frontmatter.title}
-                            </Link>
+                            <div>
+                              <span className="block text-sm font-semibold text-zinc-900 dark:text-white">
+                                {step.step}
+                              </span>
+                              <span className="mt-0.5 block text-xs leading-relaxed text-zinc-500 dark:text-zinc-400">
+                                {step.detail}
+                              </span>
+                            </div>
                           </li>
                         ))}
-                        {relatedArticles.map((post) => (
-                          <li key={post.slug}>
-                            <Link
-                              href={`/blog/${post.slug}`}
-                              className="link-underline text-fg-muted hover:text-fg"
-                            >
-                              {post.frontmatter.title}
-                            </Link>
-                          </li>
-                        ))}
-                      </ul>
+                      </ol>
                     </div>
-                  )}
 
-                  <ButtonLink href="/contact" className="self-start">
-                    Discuss {service.name.toLowerCase()}
-                    <ArrowRightIcon width={18} height={18} />
-                  </ButtonLink>
-                </aside>
-              </div>
-            </Container>
-          </Section>
-        );
-      })}
+                    <div className="rounded-2xl border border-zinc-200 bg-zinc-50 p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900/60">
+                      <h3 className="text-xs font-bold tracking-widest text-zinc-500 uppercase">
+                        Typical Timeline
+                      </h3>
+                      <p className="mt-2 text-sm leading-relaxed font-medium text-zinc-700 dark:text-zinc-300">
+                        {service.timeline}
+                      </p>
+                    </div>
 
-      <Section divided spacing="compact">
-        <Container size="narrow">
-          <div className="surface-card p-8 text-center">
-            <h2 className="text-fg text-2xl font-semibold tracking-tight">
-              Not sure which of these fits?
-            </h2>
-            <p className="text-fg-muted mt-3">
-              Describe the problem and I will tell you what I would do first — even if the answer is
-              that you do not need me.
-            </p>
-            <div className="mt-7 flex flex-wrap justify-center gap-3">
-              <ButtonLink href="/contact">Get in touch</ButtonLink>
-              <ButtonLink href="/projects" variant="outline">
-                See case studies
-              </ButtonLink>
-            </div>
-            <p className="text-fg-subtle mt-6 text-xs">
-              Or email{" "}
-              <a className="link-underline" href={`mailto:${siteConfig.contactEmail}`}>
-                {siteConfig.contactEmail}
-              </a>
-            </p>
-          </div>
-        </Container>
-      </Section>
-    </>
+                    {(relatedProjects.length > 0 || relatedArticles.length > 0) && (
+                      <div className="rounded-2xl border border-zinc-200 bg-zinc-50 p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900/60">
+                        <h3 className="mb-3 text-xs font-bold tracking-widest text-zinc-500 uppercase">
+                          Related Resources
+                        </h3>
+                        <ul className="flex flex-col gap-2.5 text-sm">
+                          {relatedProjects.map((project) => (
+                            <li key={project.slug}>
+                              <Link
+                                href={`/projects/${project.slug}`}
+                                className="text-xs font-medium text-blue-600 hover:underline sm:text-sm dark:text-blue-400"
+                              >
+                                Case Study: {project.frontmatter.title} →
+                              </Link>
+                            </li>
+                          ))}
+                          {relatedArticles.map((post) => (
+                            <li key={post.slug}>
+                              <Link
+                                href={`/blog/${post.slug}`}
+                                className="text-xs font-medium text-blue-600 hover:underline sm:text-sm dark:text-blue-400"
+                              >
+                                Guide: {post.frontmatter.title} →
+                              </Link>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+
+                    <Link
+                      href="/contact"
+                      className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-blue-600 px-6 py-3 text-sm font-semibold text-white shadow-md transition-all hover:bg-blue-700 hover:shadow-lg"
+                    >
+                      Discuss {service.name}
+                      <ArrowRightIcon width={16} height={16} />
+                    </Link>
+                  </aside>
+                </div>
+              </Container>
+            </Section>
+          );
+        })}
+      </div>
+
+      {/* Social Proof Testimonials Strip */}
+      <TestimonialsStrip />
+
+      {/* FAQs on Services */}
+      <AboutFaq />
+
+      {/* Bottom Newsletter */}
+      <NewsletterStrip />
+    </div>
   );
 }

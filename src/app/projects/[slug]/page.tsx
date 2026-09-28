@@ -249,7 +249,7 @@ export default async function ProjectPage({ params }: PageProps) {
             <ul className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {relatedArticles.map((post) => (
                 <li key={post.slug} className="flex">
-                  <PostCard post={post} variant="compact" className="w-full" />
+                  <PostCard post={post} variant="default" className="w-full" />
                 </li>
               ))}
             </ul>

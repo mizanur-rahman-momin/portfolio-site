@@ -26,17 +26,23 @@ export function Breadcrumbs({ items, className }: BreadcrumbsProps) {
             return (
               <li key={`${item.name}-${index}`} className="flex items-center gap-x-1.5">
                 {item.href && !isLast ? (
-                  <Link href={item.href} className="text-fg-muted hover:text-fg transition-colors">
+                  <Link
+                    href={item.href}
+                    className="font-medium text-zinc-500 transition-colors hover:text-blue-600 dark:text-zinc-400 dark:hover:text-blue-400"
+                  >
                     {item.name}
                   </Link>
                 ) : (
-                  <span aria-current="page" className="text-fg">
+                  <span
+                    aria-current="page"
+                    className="max-w-xs truncate font-semibold text-zinc-800 sm:max-w-md dark:text-zinc-200"
+                  >
                     {item.name}
                   </span>
                 )}
                 {!isLast ? (
                   <ChevronRightIcon
-                    className="text-fg-subtle size-3.5 shrink-0"
+                    className="size-3.5 shrink-0 text-zinc-400 dark:text-zinc-600"
                     aria-hidden="true"
                   />
                 ) : null}

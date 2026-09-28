@@ -16,18 +16,21 @@ export function NewsletterCTA({ className }: { className?: string }) {
   return (
     <section
       aria-labelledby="newsletter-heading"
-      className={`rounded-card border-border bg-surface border p-6 sm:p-8 ${className ?? ""}`}
+      className={`rounded-2xl border border-zinc-200/90 bg-white p-6 shadow-xs sm:p-8 dark:border-zinc-800/90 dark:bg-zinc-900/80 ${className ?? ""}`}
     >
-      <p className="text-accent-ink font-mono text-xs font-medium tracking-[0.14em] uppercase">
-        Stay in touch
-      </p>
+      <div className="flex items-center gap-2">
+        <span className="size-1.5 rounded-full bg-blue-600 dark:bg-blue-400" />
+        <p className="font-mono text-xs font-semibold tracking-wider text-blue-600 uppercase dark:text-blue-400">
+          Stay in touch
+        </p>
+      </div>
       <h2
         id="newsletter-heading"
-        className="mt-3 text-xl font-semibold tracking-tight text-balance"
+        className="mt-3 text-xl font-bold tracking-tight text-balance text-zinc-900 dark:text-white"
       >
         {hasProvider ? "Get new articles by email" : "Follow new articles"}
       </h2>
-      <p className="text-fg-muted mt-3 max-w-prose text-sm leading-relaxed">
+      <p className="mt-3 max-w-prose text-sm leading-relaxed text-zinc-600 dark:text-zinc-300">
         {hasProvider
           ? "Occasional emails when something worth reading is published. No spam, unsubscribe at any time."
           : "There is no email list yet. Subscribe with any RSS reader, or get in touch if you would rather hear about new work directly."}
@@ -39,7 +42,7 @@ export function NewsletterCTA({ className }: { className?: string }) {
             href={siteConfig.newsletterUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className={buttonClasses({ variant: "primary", size: "sm" })}
+            className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 text-xs font-semibold text-white shadow-xs transition-colors hover:bg-blue-700 sm:text-sm"
           >
             <MailIcon width={16} height={16} />
             Subscribe

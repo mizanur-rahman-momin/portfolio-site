@@ -28,7 +28,9 @@ export function TaxonomyList({
         <li key={item.slug}>
           <BadgeLink href={`/blog/${kind}/${item.slug}`} tone={tone}>
             {item.label}
-            <span className="text-fg-subtle">{item.count}</span>
+            <span className="text-2xs ml-1 rounded-full bg-blue-100/90 px-1.5 py-0.5 font-bold text-blue-700 dark:bg-blue-900/80 dark:text-blue-300">
+              {item.count}
+            </span>
           </BadgeLink>
         </li>
       ))}

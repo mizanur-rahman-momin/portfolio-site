@@ -1,0 +1,100 @@
+---
+title: >-
+  MiroMiro Review: Can One Browser Extension Replace Your Whole
+  Design-Extraction Stack?
+description: >-
+  A practitioner's review of MiroMiro, a browser extension that pulls colors,
+  fonts, assets, and clean Tailwind/HTML code from any live website.
+slug: miromiro-review-website-design-extraction-tool
+date: '2026-09-26'
+author: Mizanur Rahman Momin
+category: SaaS Growth
+tags:
+  - Tool Review
+  - Web Design
+  - Browser Extension
+  - Design Systems
+featured: false
+draft: false
+coverImage: ./images/cover.webp
+coverImageAlt: >-
+  MiroMiro Review: Can One Browser Extension Replace Your Whole
+  Design-Extraction Stack?
+---
+
+You find a site with a layout you love. You open DevTools, start scrolling through minified CSS, and twenty minutes later you're still guessing at a hex code. That gap between "I like this design" and "I can rebuild this design" is exactly what MiroMiro is trying to close.
+
+MiroMiro is a browser extension built by solo developer Soraia Lima Cid that inspects any element on any live page and lets you export the real computed styles, assets, and markup behind it. I took a look at what it does, who it's actually for, and where the pricing lands.
+
+## What MiroMiro Actually Does
+
+Instead of guessing from a screenshot, MiroMiro reads a page's real, rendered CSS. That distinction matters: a screenshot-based tool has to infer a color or font, while MiroMiro reports what the browser is actually using.
+
+The core workflow breaks down into four pieces:
+
+- **Element inspection** — click any element to see its true computed styles: fonts, colors, spacing, shadows, and even WCAG contrast ratios.
+- **Design system capture** — pull every color, gradient, font, shadow, and spacing value used across a page in one pass.
+- **Code export** — convert a section or full page into clean HTML, Tailwind, React, or Vue markup.
+- **Asset harvesting** — bulk-download images, SVGs, videos, and Lottie animations from a page instead of right-clicking one file at a time.
+
+<Callout type="note" title="Why this matters for AI-assisted builds">
+If you're pasting design references into an AI coding tool, real extracted code and tokens give the model something concrete to work from, instead of asking it to guess proportions and colors from a picture.
+</Callout>
+
+## Key Features Worth Knowing
+
+### Live editing and instant export
+
+You can edit values — color, font, spacing, shadow — directly on the page and see the change render in real time, then copy the result straight out as CSS or Tailwind. That's a faster loop than tweaking in DevTools and re-checking a separate style sheet.
+
+### Design tokens, not just a color picker
+
+Rather than grabbing one swatch at a time, MiroMiro captures an entire page's design system at once and exports it to a Tailwind config, CSS variables, or JSON. For anyone documenting a design system by hand today, this alone is a meaningful time save.
+
+### Built for pasting into AI tools
+
+The stated use case is pasting extracted sections directly into tools like Cursor, Claude, or v0. Because the output is real HTML/Tailwind rather than a description of a screenshot, the first-pass rebuild tends to be closer to the original.
+
+### Bulk asset export
+
+Images, SVGs, and Lottie animations can be pulled in bulk and organized in one panel, which removes a lot of the manual right-click-save friction on asset-heavy pages.
+
+## Pricing Breakdown
+
+MiroMiro is running as a lifetime-deal offer with four license tiers:
+
+| Tier | Price | Licenses | Asset Downloads/mo | Cloud Storage | One-Time API Credits |
+|------|-------|----------|---------------------|----------------|------------------------|
+| Tier 1 | $49 (was $199) | 1 | 2,000 | 5 GB | 1,000 |
+| Tier 2 | $109 (was $299) | 3 | 2,000 | 15 GB | 2,000 |
+| Tier 3 (Recommended) | $249 (was $459) | 20 | Unlimited | 50 GB | 3,000 |
+| Tier 4 (Plus exclusive) | $399 (was $629) | 40 | Unlimited | 100 GB | 3,000 + 2,000/mo |
+
+All tiers include unlimited element inspection, Lottie/SVG exports, design token export, design system exports, site token extraction, and code exports. The deal is refundable within 60 days.
+
+<Callout type="tip" title="Which tier makes sense">
+If you're a solo developer or designer just testing the workflow, Tier 1 covers unlimited code and token exports — the main thing you'd upgrade for is the monthly asset-download cap once you're pulling from image-heavy sites regularly.
+</Callout>
+
+## Pros and Cons
+
+**Pros:**
+- Reads real computed CSS instead of estimating from a screenshot
+- Consolidates a color picker, font finder, and code exporter into one panel
+- Built-in WCAG contrast checking on inspected text
+- Exports map directly to Tailwind, which fits modern front-end workflows
+- Lifetime-deal pricing with a 60-day refund window
+
+**Cons:**
+- Category fit on the deal listing sits under developer tools, so it's a niche, workflow-specific purchase rather than a broad platform
+- Lower tiers cap monthly asset downloads at 2,000, which asset-heavy workflows may hit quickly
+- As a young company (founded December 2025) with a single-founder team, long-term roadmap and support capacity are worth watching
+- An MCP server and extraction API are mentioned as in-progress, not fully mature yet
+
+## Who It's For
+
+MiroMiro is aimed squarely at developers and designers who regularly rebuild or reference existing web designs — freelancers doing client work, agencies producing landing pages, or anyone feeding real design references into AI coding tools. If your work rarely involves reverse-engineering someone else's site, the value proposition is much thinner.
+
+## Final Verdict
+
+MiroMiro solves a specific, recognizable pain point well: getting accurate design data out of a live website without stitching together five separate tools. The computed-CSS approach is the right technical foundation, and the Tailwind/code export makes it genuinely useful in an AI-assisted build workflow. It's a tool worth trying at the entry tier before committing to a higher license count.

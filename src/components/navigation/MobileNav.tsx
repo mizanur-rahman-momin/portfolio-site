@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
@@ -68,8 +69,28 @@ export function MobileNav() {
         className="bg-canvas text-fg fixed inset-0 m-0 h-full max-h-none w-full max-w-none p-0 backdrop:bg-black/50 lg:hidden"
       >
         <div className="flex h-full flex-col">
-          <div className="border-border flex h-16 shrink-0 items-center justify-between border-b px-5">
-            <span className="font-semibold tracking-tight">{siteConfig.siteName}</span>
+          <div className="flex h-16 shrink-0 items-center justify-between border-b border-zinc-200 px-5 dark:border-zinc-800">
+            <Link
+              href="/"
+              onClick={closeMenu}
+              className="inline-flex items-center transition-opacity hover:opacity-90"
+              aria-label={siteConfig.siteName}
+            >
+              <Image
+                src="/images/mizanursguidelogo.png"
+                alt={siteConfig.siteName}
+                width={150}
+                height={65}
+                className="h-8 w-auto object-contain dark:hidden"
+              />
+              <Image
+                src="/images/mizanursguidelogo-dark.png"
+                alt={siteConfig.siteName}
+                width={150}
+                height={65}
+                className="hidden h-8 w-auto object-contain dark:block"
+              />
+            </Link>
             <button
               type="button"
               onClick={closeMenu}

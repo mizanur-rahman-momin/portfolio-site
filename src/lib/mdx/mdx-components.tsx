@@ -75,9 +75,16 @@ type CalloutProps = {
 };
 
 const calloutStyles = {
-  note: "border-blue/35 bg-blue/8 text-fg",
-  tip: "border-success/35 bg-success/8 text-fg",
-  warning: "border-accent/45 bg-accent-soft text-fg",
+  note: "border-blue-500/30 bg-blue-50/60 dark:border-blue-500/30 dark:bg-blue-950/40 text-zinc-900 dark:text-zinc-100 shadow-2xs",
+  tip: "border-emerald-500/30 bg-emerald-50/60 dark:border-emerald-500/30 dark:bg-emerald-950/40 text-zinc-900 dark:text-zinc-100 shadow-2xs",
+  warning:
+    "border-amber-500/30 bg-amber-50/60 dark:border-amber-500/30 dark:bg-amber-950/40 text-zinc-900 dark:text-zinc-100 shadow-2xs",
+} as const;
+
+const calloutBadgeStyles = {
+  note: "text-blue-600 dark:text-blue-400 bg-blue-100/80 dark:bg-blue-900/50",
+  tip: "text-emerald-600 dark:text-emerald-400 bg-emerald-100/80 dark:bg-emerald-900/50",
+  warning: "text-amber-600 dark:text-amber-400 bg-amber-100/80 dark:bg-amber-900/50",
 } as const;
 
 const calloutIcons = {
@@ -88,8 +95,8 @@ const calloutIcons = {
 
 const calloutLabels = {
   note: "Note",
-  tip: "Tip",
-  warning: "Important",
+  tip: "Pro Tip",
+  warning: "Key Takeaway",
 } as const;
 
 /** Callout block for use inside MDX: `<Callout type="tip" title="...">…</Callout>` */
@@ -98,13 +105,27 @@ export function Callout({ type = "note", title, children }: CalloutProps) {
   return (
     <aside
       role="note"
-      className={cn("not-prose rounded-card my-8 border px-5 py-4 text-sm", calloutStyles[type])}
+      className={cn(
+        "not-prose my-8 rounded-2xl border p-5 text-sm backdrop-blur-xs transition-all",
+        calloutStyles[type],
+      )}
     >
-      <p className="flex items-center gap-2 font-semibold">
-        <Icon className="size-4 shrink-0" />
-        {title ?? calloutLabels[type]}
-      </p>
-      <div className="text-fg-muted mt-2 leading-relaxed [&>p]:m-0 [&>p+p]:mt-3">{children}</div>
+      <div className="flex items-center gap-2 font-semibold">
+        <span
+          className={cn(
+            "flex size-6 items-center justify-center rounded-lg",
+            calloutBadgeStyles[type],
+          )}
+        >
+          <Icon className="size-3.5 shrink-0" />
+        </span>
+        <span className="text-sm font-bold tracking-tight text-zinc-900 dark:text-white">
+          {title ?? calloutLabels[type]}
+        </span>
+      </div>
+      <div className="mt-2.5 leading-relaxed text-zinc-700 dark:text-zinc-300 [&>p]:m-0 [&>p+p]:mt-2.5">
+        {children}
+      </div>
     </aside>
   );
 }
