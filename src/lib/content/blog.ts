@@ -7,7 +7,6 @@ import { slugify } from "@/lib/utils/format";
 import {
   BLOG_ROOT,
   ContentError,
-  assertString,
   contentBaseDir,
   findColocatedCover,
   isProduction,
@@ -55,28 +54,55 @@ function readEntryFiles(): { slug: string; filePath: string }[] {
 function normalizeFrontmatter(
   data: Record<string, unknown>,
   slug: string,
-  filePath: string,
+  _filePath: string,
   baseDir: string,
 ): BlogFrontmatter {
-  assertString(data.title, "title", filePath);
-  assertString(data.description, "description", filePath);
-  assertString(data.date, "date", filePath);
-  assertString(data.category, "category", filePath);
+  const title =
+    typeof data.title === "string" && data.title.trim().length > 0
+      ? data.title.trim()
+      : slug
+          .split("-")
+          .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+          .join(" ");
+
+  const rawDescription =
+    typeof data.description === "string" && data.description.trim().length > 0
+      ? data.description.trim()
+      : "";
+  const description = rawDescription || title;
+
+  const rawCategory =
+    typeof data.category === "string" && data.category.trim().length > 0
+      ? data.category.trim()
+      : "Guides";
+
+  let dateIso = new Date().toISOString();
+  if (typeof data.date === "string" && data.date.trim().length > 0) {
+    const timestamp = new Date(data.date.trim()).getTime();
+    if (!Number.isNaN(timestamp)) {
+      dateIso = new Date(data.date.trim()).toISOString();
+    }
+  }
 
   const tags = Array.isArray(data.tags)
     ? data.tags.map((tag) => String(tag).trim()).filter(Boolean)
-    : [];
+    : typeof data.tags === "string"
+      ? (data.tags as string)
+          .split(/[,;\n]/)
+          .map((t) => t.trim())
+          .filter(Boolean)
+      : [];
 
   return {
-    title: data.title,
-    description: data.description,
+    title,
+    description,
     slug: typeof data.slug === "string" && data.slug.trim() ? data.slug.trim() : slug,
-    date: new Date(data.date as string).toISOString(),
+    date: dateIso,
     updated: optionalString(data.updated)
       ? new Date(data.updated as string).toISOString()
       : undefined,
-    author: optionalString(data.author),
-    category: data.category,
+    author: optionalString(data.author) ?? "Mizanur Rahman Momin",
+    category: rawCategory,
     tags,
     featured: data.featured === true,
     draft: data.draft === true,
@@ -122,7 +148,14 @@ function parsePost(slug: string, filePath: string): BlogPost {
 
 /** All published blog posts, newest first. Drafts are excluded in production. */
 export function getAllBlogPosts(): BlogPost[] {
-  const posts = readEntryFiles().map(({ slug, filePath }) => parsePost(slug, filePath));
+  const posts: BlogPost[] = [];
+  for (const { slug, filePath } of readEntryFiles()) {
+    try {
+      posts.push(parsePost(slug, filePath));
+    } catch (error) {
+      console.error(`[blog] Failed to parse post "${slug}" at ${filePath}:`, error);
+    }
+  }
 
   return posts
     .filter((post) => !(isProduction && post.frontmatter.draft))

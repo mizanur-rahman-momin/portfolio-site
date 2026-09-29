@@ -183,27 +183,108 @@ export async function POST(request: Request) {
       });
     }
 
-    // 7. Normalize Frontmatter metadata
+    // Sanitize HTML comments to MDX comments so they never break the MDX compiler
+    content = content.replace(/<!--([\s\S]*?)-->/g, "{/*$1*/}");
+
+    // 7. Extract & Normalize Frontmatter metadata
+    // Description: Form input -> frontmatter -> auto-excerpt from content -> fallback to title
+    const descriptionInput = formData.get("description") as string | null;
+    const rawDescription =
+      (descriptionInput && descriptionInput.trim()) ||
+      (typeof frontmatter.description === "string" ? frontmatter.description.trim() : "");
+
+    let description = rawDescription;
+    if (!description) {
+      // Auto-extract a clean 160-char text excerpt from the markdown content
+      const cleanText = content
+        .replace(/!\[.*?\]\(.*?\)/g, "") // remove images
+        .replace(/\[([^\]]+)\]\(.*?\)/g, "$1") // flatten links
+        .replace(/[#*`_~>{}]/g, "") // remove markdown punctuation
+        .replace(/\s+/g, " ")
+        .trim();
+      description = cleanText.slice(0, 160).trim();
+      if (!description) {
+        description = title;
+      }
+    }
+
+    // Category: Form input -> frontmatter -> default "Guides"
+    const categoryInput = formData.get("category") as string | null;
+    const rawCategory =
+      (categoryInput && categoryInput.trim()) ||
+      (typeof frontmatter.category === "string" ? frontmatter.category.trim() : "");
+    const category = rawCategory || "Guides";
+
+    // Tags: Form input -> frontmatter -> empty array
+    const tagsInput = formData.get("tags") as string | null;
+    let tags: string[] = [];
+    if (tagsInput && tagsInput.trim()) {
+      try {
+        const parsed = JSON.parse(tagsInput);
+        if (Array.isArray(parsed)) {
+          tags = parsed.map((t) => String(t).trim()).filter(Boolean);
+        } else {
+          tags = tagsInput
+            .split(/[,;\n]/)
+            .map((t) => t.trim())
+            .filter(Boolean);
+        }
+      } catch {
+        tags = tagsInput
+          .split(/[,;\n]/)
+          .map((t) => t.trim())
+          .filter(Boolean);
+      }
+    } else if (Array.isArray(frontmatter.tags)) {
+      tags = frontmatter.tags.map((t) => String(t).trim()).filter(Boolean);
+    } else if (typeof frontmatter.tags === "string") {
+      tags = (frontmatter.tags as string)
+        .split(/[,;\n]/)
+        .map((t) => t.trim())
+        .filter(Boolean);
+    }
+
+    // Author: Form input -> frontmatter -> default author
+    const authorInput = formData.get("author") as string | null;
+    const author =
+      (authorInput && authorInput.trim()) ||
+      (typeof frontmatter.author === "string" ? frontmatter.author.trim() : "") ||
+      "Mizanur Rahman Momin";
+
+    // Date: Form input -> frontmatter -> today's date
+    const dateInput = formData.get("date") as string | null;
+    const rawDate =
+      (dateInput && dateInput.trim()) ||
+      (typeof frontmatter.date === "string" ? frontmatter.date.trim() : "");
+    let dateStr = rawDate;
+    if (!dateStr || Number.isNaN(new Date(dateStr).getTime())) {
+      dateStr = new Date().toISOString().split("T")[0];
+    } else {
+      dateStr = new Date(dateStr).toISOString().split("T")[0];
+    }
+
+    // Draft & Featured flags
+    const draftInput = formData.get("draft") as string | null;
+    const draft =
+      draftInput !== null
+        ? draftInput === "true" || draftInput === "1"
+        : frontmatter.draft === true;
+
+    const featuredInput = formData.get("featured") as string | null;
+    const featured =
+      featuredInput !== null
+        ? featuredInput === "true" || featuredInput === "1"
+        : frontmatter.featured === true;
+
     frontmatter.title = title;
     frontmatter.slug = slug;
-    if (!frontmatter.date) {
-      frontmatter.date = new Date().toISOString().split("T")[0];
-    }
-    if (!frontmatter.author) {
-      frontmatter.author = "Mizanur Rahman Momin";
-    }
-    if (!frontmatter.category) {
-      frontmatter.category = "Guides";
-    }
-    if (!Array.isArray(frontmatter.tags)) {
-      frontmatter.tags = [];
-    }
-    if (frontmatter.draft === undefined) {
-      frontmatter.draft = false;
-    }
-    if (frontmatter.featured === undefined) {
-      frontmatter.featured = false;
-    }
+    frontmatter.description = description;
+    frontmatter.category = category;
+    frontmatter.tags = tags;
+    frontmatter.author = author;
+    frontmatter.date = dateStr;
+    frontmatter.draft = draft;
+    frontmatter.featured = featured;
 
     // 8. Write final index.mdx file
     const finalMdx = matter.stringify(content, frontmatter);
@@ -213,6 +294,10 @@ export async function POST(request: Request) {
     try {
       revalidatePath("/blog");
       revalidatePath(`/blog/${slug}`);
+      revalidatePath(`/blog/category/${slugify(category)}`);
+      revalidatePath("/");
+      revalidatePath("/sitemap.xml");
+      revalidatePath("/rss.xml");
     } catch (e) {
       console.warn("Revalidation warning:", e);
     }
