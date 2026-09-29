@@ -72,7 +72,7 @@ export default function ContactPage() {
           </h1>
           <p className="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-zinc-600 sm:text-lg dark:text-zinc-400">
             Tell me who you want to reach and what you have tried. I will reply with an honest
-            assessment and what steps I would take first.
+            assessment and what steps I would take first...
           </p>
         </Container>
       </section>
