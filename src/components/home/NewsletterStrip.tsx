@@ -6,11 +6,35 @@ import { Container } from "@/components/ui/Container";
 export function NewsletterStrip() {
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!email || !email.includes("@")) return;
-    setSubmitted(true);
+
+    setLoading(true);
+    setErrorMessage("");
+
+    try {
+      const res = await fetch("/api/newsletter", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = (await res.json().catch(() => ({}))) as { ok?: boolean; error?: string };
+
+      if (res.ok && data.ok) {
+        setSubmitted(true);
+      } else {
+        setErrorMessage(data.error || "Unable to subscribe right now. Please try again.");
+      }
+    } catch {
+      setErrorMessage("Network error. Please check your connection and try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -52,23 +76,32 @@ export function NewsletterStrip() {
                   confirm and get your welcome playbook.
                 </div>
               ) : (
-                <form onSubmit={handleSubmit} className="flex flex-col gap-2.5 sm:flex-row">
-                  <input
-                    type="email"
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="Enter your work email"
-                    aria-label="Work email address"
-                    className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 text-sm text-zinc-900 placeholder-zinc-400 shadow-xs transition-colors focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 dark:placeholder-zinc-500"
-                  />
-                  <button
-                    type="submit"
-                    className="inline-flex shrink-0 cursor-pointer items-center justify-center rounded-xl bg-blue-600 px-6 py-3 text-sm font-semibold text-white shadow-md transition-all hover:bg-blue-700 hover:shadow-lg active:bg-blue-800"
-                  >
-                    Subscribe Free
-                  </button>
-                </form>
+                <div className="space-y-3">
+                  <form onSubmit={handleSubmit} className="flex flex-col gap-2.5 sm:flex-row">
+                    <input
+                      type="email"
+                      required
+                      disabled={loading}
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="Enter your work email"
+                      aria-label="Work email address"
+                      className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 text-sm text-zinc-900 placeholder-zinc-400 shadow-xs transition-colors focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none disabled:opacity-60 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 dark:placeholder-zinc-500"
+                    />
+                    <button
+                      type="submit"
+                      disabled={loading}
+                      className="inline-flex shrink-0 cursor-pointer items-center justify-center rounded-xl bg-blue-600 px-6 py-3 text-sm font-semibold text-white shadow-md transition-all hover:bg-blue-700 hover:shadow-lg active:bg-blue-800 disabled:cursor-not-allowed disabled:opacity-70"
+                    >
+                      {loading ? "Subscribing..." : "Subscribe Free"}
+                    </button>
+                  </form>
+                  {errorMessage && (
+                    <p className="text-center text-xs font-medium text-rose-600 dark:text-rose-400">
+                      {errorMessage}
+                    </p>
+                  )}
+                </div>
               )}
 
               {/* Guarantees */}
