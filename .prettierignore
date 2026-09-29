@@ -13,5 +13,6 @@ package-lock.json
 
 # Authored content is prose: Prettier would reflow it, so leave it alone.
 content
+emails
 *.md
 *.mdx
