@@ -59,19 +59,20 @@ function escapeHtml(text: string): string {
     .replace(/'/g, "&#039;");
 }
 
-async function addAcumbamailSubscriber(email: string, name: string) {
+async function addAcumbamailSubscriber(email: string, name: string): Promise<boolean> {
   const authToken = process.env.ACUMBAMAIL_AUTH_TOKEN?.trim();
   const listId = process.env.ACUMBAMAIL_LIST_ID?.trim();
 
-  if (!authToken || !listId) return;
+  if (!authToken || !listId) return false;
 
   try {
     const params = new URLSearchParams();
     params.append("auth_token", authToken);
     params.append("response_type", "json");
     params.append("list_id", listId);
+    params.append("merge_fields[email]", email);
+    params.append("merge_fields[nombre]", name);
     params.append("merge_fields[name]", name);
-    params.append("email", email);
     params.append("update_subscriber", "1");
 
     const res = await fetch("https://acumbamail.com/api/1/addSubscriber/", {
@@ -81,19 +82,23 @@ async function addAcumbamailSubscriber(email: string, name: string) {
       signal: AbortSignal.timeout(8000),
     });
 
-    if (!res.ok) {
-      console.warn("[contact] Acumbamail addSubscriber returned status:", res.status);
+    if (res.ok || res.status === 201) {
+      return true;
     }
+    console.warn("[contact] Acumbamail addSubscriber returned status:", res.status);
+    return false;
   } catch (err) {
     console.error("[contact] Failed to add subscriber to Acumbamail list:", err);
+    return false;
   }
 }
 
 async function sendAcumbamailEmail(input: ContactInput): Promise<boolean> {
   const smtpUser = process.env.ACUMBAMAIL_SMTP_USER?.trim();
   const authToken = process.env.ACUMBAMAIL_AUTH_TOKEN?.trim();
+  const smtpPass = process.env.ACUMBAMAIL_SMTP_PASSWORD?.trim() || authToken;
 
-  if (!smtpUser || !authToken) return false;
+  if (!smtpUser || !smtpPass) return false;
 
   const smtpHost = process.env.ACUMBAMAIL_SMTP_HOST?.trim() || "smtp.acumbamail.com";
   const smtpPort = Number(process.env.ACUMBAMAIL_SMTP_PORT) || 587;
@@ -106,7 +111,7 @@ async function sendAcumbamailEmail(input: ContactInput): Promise<boolean> {
     secure: smtpPort === 465,
     auth: {
       user: smtpUser,
-      pass: authToken,
+      pass: smtpPass,
     },
   });
 
@@ -206,7 +211,8 @@ export async function POST(request: Request) {
   }
 
   const hasAcumbamail = Boolean(
-    process.env.ACUMBAMAIL_SMTP_USER?.trim() && process.env.ACUMBAMAIL_AUTH_TOKEN?.trim(),
+    process.env.ACUMBAMAIL_AUTH_TOKEN?.trim() &&
+    (process.env.ACUMBAMAIL_SMTP_USER?.trim() || process.env.ACUMBAMAIL_LIST_ID?.trim()),
   );
   const webhookUrl = process.env.CONTACT_WEBHOOK_URL?.trim();
 
@@ -226,18 +232,24 @@ export async function POST(request: Request) {
 
   // 1. Direct Acumbamail delivery
   if (hasAcumbamail) {
-    try {
-      await sendAcumbamailEmail(input);
-      delivered = true;
-
-      // Also add to Acumbamail audience list if configured
-      if (process.env.ACUMBAMAIL_LIST_ID?.trim()) {
-        addAcumbamailSubscriber(input.email, input.name).catch((err) => {
-          console.error("[contact] background addSubscriber error:", err);
-        });
+    // Attempt saving to Acumbamail audience list
+    if (process.env.ACUMBAMAIL_LIST_ID?.trim()) {
+      try {
+        const added = await addAcumbamailSubscriber(input.email, input.name);
+        if (added) delivered = true;
+      } catch (err) {
+        console.error("[contact] Acumbamail addSubscriber error:", err);
       }
-    } catch (error) {
-      console.error("[contact] Acumbamail SMTP delivery failed:", error);
+    }
+
+    // Attempt sending lead notification email via SMTP
+    if (process.env.ACUMBAMAIL_SMTP_USER?.trim()) {
+      try {
+        const sent = await sendAcumbamailEmail(input);
+        if (sent) delivered = true;
+      } catch (error) {
+        console.error("[contact] Acumbamail SMTP delivery failed:", error);
+      }
     }
   }
 
