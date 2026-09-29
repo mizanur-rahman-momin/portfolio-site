@@ -43,6 +43,7 @@ const securityHeaders = [
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
+  output: "standalone",
   // Pin the workspace root so builds do not walk up into the user's home folder.
   turbopack: {
     root: import.meta.dirname,
