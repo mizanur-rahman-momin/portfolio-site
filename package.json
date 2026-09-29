@@ -10,7 +10,7 @@
     "predev": "node scripts/prebuild.mjs",
     "dev": "next dev",
     "prebuild": "node scripts/prebuild.mjs",
-    "build": "next build",
+    "build": "next build --webpack",
     "start": "node server.js",
     "generate:covers": "python3 scripts/generate-blog-covers.py",
     "sync:images": "node scripts/sync-content-images.mjs",
