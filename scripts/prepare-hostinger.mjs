@@ -55,7 +55,9 @@ try {
   const stats = fs.statSync(zipFile);
   const sizeMb = (stats.size / (1024 * 1024)).toFixed(2);
   console.log(`\n🎉 Success! Created hostinger-deploy.zip (${sizeMb} MB) in project root.`);
-  console.log("You can now upload hostinger-deploy.zip directly to Hostinger File Manager and extract it!\n");
+  console.log(
+    "You can now upload hostinger-deploy.zip directly to Hostinger File Manager and extract it!\n",
+  );
 } catch (err) {
   console.error("Warning: Failed to create zip archive:", err);
   console.log("You can manually zip the contents of .next/standalone/");

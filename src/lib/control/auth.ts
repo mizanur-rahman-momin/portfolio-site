@@ -5,9 +5,26 @@ export const CONTROL_COOKIE_NAME = "control_session";
 const SESSION_MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
 
 function getCredentials() {
-  const password = process.env.CONTROL_PANEL_PASSWORD || "mizanur-admin-2026";
-  const secret = process.env.CONTROL_PANEL_SECRET || "mizanurs-guide-control-secret-salt-2026";
-  return { password, secret };
+  const isProd = process.env.NODE_ENV === "production";
+  const password = process.env.CONTROL_PANEL_PASSWORD?.trim();
+  const secret = process.env.CONTROL_PANEL_SECRET?.trim();
+
+  // In production, strictly require an explicit non-default password
+  if (isProd) {
+    if (!password || password === "change-to-a-strong-password") {
+      return { password: "", secret: "" };
+    }
+    return {
+      password,
+      secret: secret || crypto.createHash("sha256").update(password).digest("hex"),
+    };
+  }
+
+  // Development fallbacks only
+  return {
+    password: password || "mizanur-admin-2026",
+    secret: secret || "mizanurs-guide-control-secret-salt-2026",
+  };
 }
 
 /** Check if submitted password matches the configured control panel password */

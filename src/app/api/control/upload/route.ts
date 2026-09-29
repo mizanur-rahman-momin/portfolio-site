@@ -8,6 +8,10 @@ import { slugify } from "@/lib/utils/format";
 
 export const dynamic = "force-dynamic";
 
+const ALLOWED_IMAGE_EXTS = new Set([".png", ".jpg", ".jpeg", ".webp", ".avif", ".gif", ".svg"]);
+const MAX_IMAGE_SIZE = 10 * 1024 * 1024; // 10MB
+const MAX_MDX_SIZE = 2 * 1024 * 1024; // 2MB
+
 export async function POST(request: Request) {
   try {
     const authed = await isAuthenticated();
@@ -20,6 +24,10 @@ export async function POST(request: Request) {
     // 1. Extract MDX content
     const mdxFile = formData.get("mdxFile") as File | null;
     const mdxTextOverride = formData.get("mdxText") as string | null;
+
+    if (mdxFile && mdxFile.size > MAX_MDX_SIZE) {
+      return NextResponse.json({ error: "MDX file exceeds 2MB limit" }, { status: 400 });
+    }
 
     let rawMdx = "";
     if (mdxTextOverride && mdxTextOverride.trim()) {
@@ -73,7 +81,20 @@ export async function POST(request: Request) {
     const coverImageAltInput = formData.get("coverImageAlt") as string | null;
 
     if (coverImageFile && coverImageFile.size > 0) {
+      if (coverImageFile.size > MAX_IMAGE_SIZE) {
+        return NextResponse.json({ error: "Cover image exceeds 10MB limit" }, { status: 400 });
+      }
+
       const ext = path.extname(coverImageFile.name).toLowerCase() || ".png";
+      if (!ALLOWED_IMAGE_EXTS.has(ext)) {
+        return NextResponse.json(
+          {
+            error: `Invalid cover image extension (${ext}). Allowed: png, jpg, jpeg, webp, avif, gif, svg`,
+          },
+          { status: 400 },
+        );
+      }
+
       const coverFileName = `cover${ext}`;
       const coverBuffer = Buffer.from(await coverImageFile.arrayBuffer());
 
@@ -99,7 +120,6 @@ export async function POST(request: Request) {
     }
 
     // 6. Handle Placeholder Images (e.g. image1, image2, image3, ...)
-    // Look for all keys in formData starting with "image_" or "image[0-9]+"
     const processedSlots = new Set<string>();
 
     for (const [key, value] of formData.entries()) {
@@ -111,10 +131,27 @@ export async function POST(request: Request) {
         slotKey = slotKey.replace(/^image_/, "");
       }
 
-      slotKey = slotKey.trim().toLowerCase();
+      // Sanitize slotKey strictly to alphanumeric/dashes (prevent path traversal)
+      slotKey = slotKey.replace(/[^a-z0-9_-]/gi, "").toLowerCase();
       if (!slotKey) continue;
 
+      if (value.size > MAX_IMAGE_SIZE) {
+        return NextResponse.json(
+          { error: `Image slot ${slotKey} exceeds 10MB limit` },
+          { status: 400 },
+        );
+      }
+
       const ext = path.extname(value.name).toLowerCase() || ".png";
+      if (!ALLOWED_IMAGE_EXTS.has(ext)) {
+        return NextResponse.json(
+          {
+            error: `Invalid image extension for ${slotKey} (${ext}). Allowed: png, jpg, jpeg, webp, avif, gif, svg`,
+          },
+          { status: 400 },
+        );
+      }
+
       const filename = `${slotKey}${ext}`;
       const fileBuffer = Buffer.from(await value.arrayBuffer());
 
