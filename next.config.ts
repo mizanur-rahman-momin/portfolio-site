@@ -46,7 +46,7 @@ const nextConfig: NextConfig = {
   output: "standalone",
   // Pin the workspace root so builds do not walk up into the user's home folder.
   turbopack: {
-    root: import.meta.dirname,
+    root: process.cwd(),
   },
   images: {
     // Modern formats first; Next negotiates the best supported option.

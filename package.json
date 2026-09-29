@@ -4,7 +4,7 @@
   "private": true,
   "description": "World-class personal portfolio and blog built with Next.js, TypeScript, Tailwind CSS and MDX.",
   "engines": {
-    "node": ">=20.11.0"
+    "node": ">=20.0.0"
   },
   "scripts": {
     "predev": "node scripts/prebuild.mjs",
